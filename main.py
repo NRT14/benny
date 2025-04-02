@@ -6,7 +6,7 @@ import asyncio
 
 # Încarcă variabilele din .env (inclusiv tokenul botului)
 load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("TOKEN")
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
