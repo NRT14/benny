@@ -4,6 +4,7 @@ from discord import app_commands
 import json
 import datetime
 import os
+import pytz
 
 class OnCommand(commands.Cog):
     def __init__(self, bot):
@@ -11,11 +12,12 @@ class OnCommand(commands.Cog):
 
     @app_commands.command(name="on", description="🟠 Activează pontajul")
     async def on(self, interaction: discord.Interaction):
+        await interaction.response.defer(thinking=False, ephemeral=False)  # Ascunde inputul și face outputul public
+
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
-        now = datetime.datetime.now().strftime("%H:%M")
-        public_channel = interaction.client.get_channel(1355951493458427985)
         log_channel = interaction.client.get_channel(1355983254175486014)
+        garage_channel = interaction.client.get_channel(1355951493458427985)  # canal BENNY'S-GARAGE
 
         if not os.path.exists(file_path):
             with open(file_path, "w") as f:
@@ -31,8 +33,12 @@ class OnCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed)
+            await garage_channel.send(embed=embed)
             return
+
+        # Ora în funcție de regiunea utilizatorului (fallback România)
+        user_time = datetime.datetime.now(datetime.timezone.utc).astimezone(pytz.timezone("Europe/Bucharest"))
+        ora = user_time.strftime("%H:%M")
 
         data[user_id] = {
             "on": True,
@@ -44,21 +50,20 @@ class OnCommand(commands.Cog):
             json.dump(data, f, indent=4)
 
         embed = discord.Embed(
-            title="☂️ Pontaj pornit cu succes",
-            description="🛠️ Pontajul este activ. Spor la muncă!",
+            title="☂️ Începere pontaj",
+            description=f"🟢 {interaction.user.mention} a intrat pe pontaj la {ora}.",
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed)
+        await garage_channel.send(embed=embed)
 
         log_embed = discord.Embed(
-            title="☂️ Activare pontaj",
-            description=f"✅ {interaction.user.mention} a intrat pe pontaj la {now}.",
+            title="☂️ Log Pontaj",
+            description=f"📝 {interaction.user.mention} → /on — ora {ora}",
             color=discord.Colour.from_str("#FFA500")
         )
         log_embed.set_footer(text="Benny's Service • Designed for NRT")
-        await public_channel.send(embed=log_embed)
-        await log_channel.send(f"📥 /on → {interaction.user} [{interaction.user.id}] — {now}")
+        await log_channel.send(embed=log_embed)
 
 async def setup(bot):
     await bot.add_cog(OnCommand(bot))
