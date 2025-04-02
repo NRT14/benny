@@ -3,41 +3,43 @@ from discord.ext import commands
 from discord import app_commands
 import json
 import os
-from datetime import datetime
 
-CHANNEL_ID = 1106207655002898514  # Conducere Service
-
-class DutyReport(commands.Cog):
+class DutyReportCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="duty-report", description="Raport pontaj zilnic")
+    @app_commands.command(name="duty-report", description="📄 Raport complet cu orele tuturor")
     async def duty_report(self, interaction: discord.Interaction):
-        if not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("⛔ Nu ai acces la această comandă.", ephemeral=True)
-            return
-
         file_path = "data/pontaj_data.json"
         if not os.path.exists(file_path):
-            await interaction.response.send_message("⚠️ Nu există date salvate.", ephemeral=True)
+            embed = discord.Embed(
+                title="☂️ Nicio înregistrare",
+                description="Nu există date de pontaj înregistrate momentan.",
+                color=discord.Colour.from_str("#FFA500")
+            )
+            embed.set_footer(text="Benny's Service • Designed for NRT")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
         with open(file_path, "r") as f:
             data = json.load(f)
 
-        embed = discord.Embed(title="📋 Raport Pontaj Zilnic", color=discord.Color.orange())
-
+        lines = []
         for user_id, info in data.items():
-            user = await self.bot.fetch_user(int(user_id))
             total = info.get("total", 0)
-            hours = total // 60
-            mins = total % 60
-            status = "🟢 ON" if info.get("on") else "🔴 OFF"
-            embed.add_field(name=user.display_name, value=f"{status} – {hours}h {mins}m", inline=False)
+            ore = total // 60
+            minute = total % 60
+            lines.append(f"<@{user_id}> — **{ore}h {minute}m**")
 
-        channel = self.bot.get_channel(CHANNEL_ID)
-        await channel.send(embed=embed)
-        await interaction.response.send_message("✅ Raport trimis cu succes.", ephemeral=True)
+        report = "\n".join(lines) or "Nu există membri înregistrați."
+        embed = discord.Embed(
+            title="☂️ Raport complet pontaj",
+            description=report,
+            color=discord.Colour.from_str("#FFA500")
+        )
+        embed.set_footer(text="Benny's Service • Designed for NRT")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(DutyReport(bot))
+    await bot.add_cog(DutyReportCommand(bot))

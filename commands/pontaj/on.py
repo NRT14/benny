@@ -22,11 +22,11 @@ class OnCommand(commands.Cog):
 
         if user_id in data and data[user_id].get("on", False):
             embed = discord.Embed(
-                title="🟠☂️ Pontaj deja activ",
+                title="☂️ Pontaj deja activ",
                 description="Ești deja ON. Nu uita să folosești /off la final!",
                 color=discord.Colour.from_str("#FFA500")
             )
-            embed.set_footer(text="Benny's Service • Umbrelă activă 🟠☂️")
+            embed.set_footer(text="Benny's Service • Designed for NRT")
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
@@ -40,7 +40,7 @@ class OnCommand(commands.Cog):
             json.dump(data, f, indent=4)
 
         embed = discord.Embed(
-            title="🟠☂️ Pontaj pornit cu succes",
+            title="☂️ Pontaj pornit cu succes",
             description="🛠️ Pontajul este activ. Spor la muncă!",
             color=discord.Colour.from_str("#FFA500")
         )
