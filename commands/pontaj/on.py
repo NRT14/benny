@@ -13,6 +13,10 @@ class OnCommand(commands.Cog):
     async def on(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
+        now = datetime.datetime.now().strftime("%H:%M")
+        public_channel = interaction.client.get_channel(1355951493458427985)  # ʙᴇɴɴʏꜱ-ɢᴀʀᴀɢᴇ
+        log_channel = interaction.client.get_channel(1355983254175486014)     # LOG-BENNY
+
         if not os.path.exists(file_path):
             with open(file_path, "w") as f:
                 json.dump({}, f)
@@ -28,6 +32,7 @@ class OnCommand(commands.Cog):
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
             await interaction.response.send_message(embed=embed, ephemeral=True)
+            await log_channel.send(f"🟠 {interaction.user.mention} a încercat /on dar era deja activ — {now}")
             return
 
         data[user_id] = {
@@ -44,8 +49,11 @@ class OnCommand(commands.Cog):
             description="🛠️ Pontajul este activ. Spor la muncă!",
             color=discord.Colour.from_str("#FFA500")
         )
-        embed.set_footer(text="Benny's Service • Designed for NRT ")
+        embed.set_footer(text="Benny's Service • Designed for NRT")
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        await public_channel.send(f"✅ {interaction.user.mention} a intrat pe pontaj la {now}.")
+        await log_channel.send(f"📥 /on → {interaction.user} [{interaction.user.id}] — {now}")
 
 async def setup(bot):
     await bot.add_cog(OnCommand(bot))

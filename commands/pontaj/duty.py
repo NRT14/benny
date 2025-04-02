@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import json
 import os
+import datetime
 
 class DutyCommand(commands.Cog):
     def __init__(self, bot):
@@ -12,6 +13,8 @@ class DutyCommand(commands.Cog):
     async def duty(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
+        now = datetime.datetime.now().strftime("%H:%M")
+        log_channel = interaction.client.get_channel(1355983254175486014)
 
         if not os.path.exists(file_path):
             embed = discord.Embed(
@@ -21,6 +24,7 @@ class DutyCommand(commands.Cog):
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
             await interaction.response.send_message(embed=embed, ephemeral=True)
+            await log_channel.send(f"📍 /duty → {interaction.user} — fără fișier — {now}")
             return
 
         with open(file_path, "r") as f:
@@ -34,6 +38,7 @@ class DutyCommand(commands.Cog):
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
         await interaction.response.send_message(embed=embed, ephemeral=True)
+        await log_channel.send(f"📍 /duty → {interaction.user} — {'ON' if status else 'OFF'} — {now}")
 
 async def setup(bot):
     await bot.add_cog(DutyCommand(bot))
