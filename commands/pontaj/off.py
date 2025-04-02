@@ -9,7 +9,7 @@ class OffCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="off", description="🔻 Oprește pontajul")
+    @app_commands.command(name="off", description="🟠 Oprește pontajul")
     async def off(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
@@ -24,8 +24,7 @@ class OffCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"🔻 {interaction.user.mention} a încercat /off dar nu era ON — {now}")
+            await interaction.response.send_message(embed=embed)
             return
 
         with open(file_path, "r") as f:
@@ -38,8 +37,7 @@ class OffCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"🔻 {interaction.user.mention} a dat /off fără să fie ON — {now}")
+            await interaction.response.send_message(embed=embed)
             return
 
         start_time = datetime.datetime.fromisoformat(data[user_id]["start"])
@@ -58,9 +56,15 @@ class OffCommand(commands.Cog):
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed)
 
-        await public_channel.send(f"🛑 {interaction.user.mention} a ieșit de pe pontaj la {now}. ➕ {minutes}m")
+        log_embed = discord.Embed(
+            title="☂️ Închidere pontaj",
+            description=f"🛑 {interaction.user.mention} a ieșit de pe pontaj la {now}. ➕ {minutes}m",
+            color=discord.Colour.from_str("#FFA500")
+        )
+        log_embed.set_footer(text="Benny's Service • Designed for NRT")
+        await public_channel.send(embed=log_embed)
         await log_channel.send(f"📤 /off → {interaction.user} [{interaction.user.id}] — {now}, +{minutes}m")
 
 async def setup(bot):

@@ -9,7 +9,7 @@ class HoursCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="hours", description="📊 Afișează orele acumulate")
+    @app_commands.command(name="hours", description="🟠 ⏱️ Afișează orele acumulate")
     async def hours(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
@@ -23,8 +23,14 @@ class HoursCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"📊 /hours → {interaction.user} — fără date — {now}")
+            await interaction.response.send_message(embed=embed)
+            log_embed = discord.Embed(
+                title="☂️ Log Pontaj",
+                description=f"📝 {interaction.user.mention} → /hours — fără date — {now}",
+                color=discord.Colour.from_str("#FFA500")
+            )
+            log_embed.set_footer(text="Benny's Service • Designed for NRT")
+            await log_channel.send(embed=log_embed)
             return
 
         with open(file_path, "r") as f:
@@ -40,8 +46,15 @@ class HoursCommand(commands.Cog):
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        await log_channel.send(f"📊 /hours → {interaction.user} — {hours}h {minutes}m — {now}")
+        await interaction.response.send_message(embed=embed)
+
+        log_embed = discord.Embed(
+            title="☂️ Log Pontaj",
+            description=f"📝 {interaction.user.mention} → /hours — {hours}h {minutes}m — {now}",
+            color=discord.Colour.from_str("#FFA500")
+        )
+        log_embed.set_footer(text="Benny's Service • Designed for NRT")
+        await log_channel.send(embed=log_embed)
 
 async def setup(bot):
     await bot.add_cog(HoursCommand(bot))

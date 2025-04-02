@@ -9,7 +9,7 @@ class DutyReportCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="duty-report", description="📄 Raport complet cu orele tuturor")
+    @app_commands.command(name="duty-report", description="🟠 📄 Raport complet cu orele tuturor")
     async def duty_report(self, interaction: discord.Interaction):
         file_path = "data/pontaj_data.json"
         now = datetime.datetime.now().strftime("%H:%M")
@@ -22,8 +22,14 @@ class DutyReportCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"📄 /duty-report → {interaction.user} — fără fișier — {now}")
+            await interaction.response.send_message(embed=embed)
+            log_embed = discord.Embed(
+                title="☂️ Log Pontaj",
+                description=f"📝 {interaction.user.mention} → /duty-report — fără fișier — {now}",
+                color=discord.Colour.from_str("#FFA500")
+            )
+            log_embed.set_footer(text="Benny's Service • Designed for NRT")
+            await log_channel.send(embed=log_embed)
             return
 
         with open(file_path, "r") as f:
@@ -43,8 +49,15 @@ class DutyReportCommand(commands.Cog):
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        await log_channel.send(f"📄 /duty-report → {interaction.user} — {len(lines)} membri — {now}")
+        await interaction.response.send_message(embed=embed)
+
+        log_embed = discord.Embed(
+            title="☂️ Log Pontaj",
+            description=f"📝 {interaction.user.mention} → /duty-report — {len(lines)} membri — {now}",
+            color=discord.Colour.from_str("#FFA500")
+        )
+        log_embed.set_footer(text="Benny's Service • Designed for NRT")
+        await log_channel.send(embed=log_embed)
 
 async def setup(bot):
     await bot.add_cog(DutyReportCommand(bot))

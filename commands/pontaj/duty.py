@@ -9,7 +9,7 @@ class DutyCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="duty", description="📍 Verifică dacă ești ON sau OFF")
+    @app_commands.command(name="duty", description="🟠 👁️ Verifică dacă ești ON sau OFF")
     async def duty(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
@@ -23,8 +23,14 @@ class DutyCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"📍 /duty → {interaction.user} — fără fișier — {now}")
+            await interaction.response.send_message(embed=embed)
+            log_embed = discord.Embed(
+                title="☂️ Log Pontaj",
+                description=f"📝 {interaction.user.mention} → /duty — fără fișier — {now}",
+                color=discord.Colour.from_str("#FFA500")
+            )
+            log_embed.set_footer(text="Benny's Service • Designed for NRT")
+            await log_channel.send(embed=log_embed)
             return
 
         with open(file_path, "r") as f:
@@ -37,8 +43,15 @@ class DutyCommand(commands.Cog):
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        await log_channel.send(f"📍 /duty → {interaction.user} — {'ON' if status else 'OFF'} — {now}")
+        await interaction.response.send_message(embed=embed)
+
+        log_embed = discord.Embed(
+            title="☂️ Log Pontaj",
+            description=f"📝 {interaction.user.mention} → /duty — {'ON' if status else 'OFF'} — {now}",
+            color=discord.Colour.from_str("#FFA500")
+        )
+        log_embed.set_footer(text="Benny's Service • Designed for NRT")
+        await log_channel.send(embed=log_embed)
 
 async def setup(bot):
     await bot.add_cog(DutyCommand(bot))

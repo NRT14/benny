@@ -14,8 +14,8 @@ class OnCommand(commands.Cog):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
         now = datetime.datetime.now().strftime("%H:%M")
-        public_channel = interaction.client.get_channel(1355951493458427985)  # ʙᴇɴɴʏꜱ-ɢᴀʀᴀɢᴇ
-        log_channel = interaction.client.get_channel(1355983254175486014)     # LOG-BENNY
+        public_channel = interaction.client.get_channel(1355951493458427985)
+        log_channel = interaction.client.get_channel(1355983254175486014)
 
         if not os.path.exists(file_path):
             with open(file_path, "w") as f:
@@ -31,8 +31,7 @@ class OnCommand(commands.Cog):
                 color=discord.Colour.from_str("#FFA500")
             )
             embed.set_footer(text="Benny's Service • Designed for NRT")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await log_channel.send(f"🟠 {interaction.user.mention} a încercat /on dar era deja activ — {now}")
+            await interaction.response.send_message(embed=embed)
             return
 
         data[user_id] = {
@@ -50,9 +49,15 @@ class OnCommand(commands.Cog):
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed)
 
-        await public_channel.send(f"✅ {interaction.user.mention} a intrat pe pontaj la {now}.")
+        log_embed = discord.Embed(
+            title="☂️ Activare pontaj",
+            description=f"✅ {interaction.user.mention} a intrat pe pontaj la {now}.",
+            color=discord.Colour.from_str("#FFA500")
+        )
+        log_embed.set_footer(text="Benny's Service • Designed for NRT")
+        await public_channel.send(embed=log_embed)
         await log_channel.send(f"📥 /on → {interaction.user} [{interaction.user.id}] — {now}")
 
 async def setup(bot):
