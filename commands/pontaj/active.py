@@ -62,7 +62,7 @@ class ActiveCommand(commands.Cog):
 
         embed = discord.Embed(
             title="☂️ Membri activi",
-            description="✅ Următorii membri sunt ON:\n" + "\n".join(on_users),
+            description="✅ Următorii membri sunt ON:" + "".join(on_users),
             color=discord.Colour.from_str("#FFA500")
         )
         embed.set_footer(text="Benny's Service • Designed for NRT")
