@@ -1,29 +1,23 @@
-import discord
-from discord.ext import commands
 import os
 from dotenv import load_dotenv
-import asyncio
+import discord
+from discord.ext import commands
 
-# Încarcă variabilele din .env (inclusiv tokenul botului)
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
+load_dotenv()  # Încarcă variabilele din fișierul .env
 
-intents = discord.Intents.all()
+TOKEN = os.getenv("TOKEN")  # Ia tokenul
+
+# Verifică dacă a fost citit corect
+if TOKEN is None:
+    raise ValueError("TOKEN is missing! Check your .env file or environment variables.")
+
+intents = discord.Intents.default()
+intents.message_content = True
+
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()
-    print(f"{bot.user} este online și slash commands sunt sincronizate!")
+    print(f"✅ Logged in as {bot.user}")
 
-# Încarcă toate comenzile din folderul commands/pontaj/
-async def load():
-    for filename in os.listdir("./commands/pontaj"):
-        if filename.endswith(".py"):
-            await bot.load_extension(f"commands.pontaj.{filename[:-3]}")
-
-async def main():
-    await load()
-    await bot.start(TOKEN)
-
-asyncio.run(main())
+bot.run(TOKEN)
