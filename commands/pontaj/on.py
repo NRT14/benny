@@ -9,7 +9,7 @@ class OnCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="on", description="Start duty (pontaj)")
+    @app_commands.command(name="on", description="🟢 Activează pontajul")
     async def on(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         file_path = "data/pontaj_data.json"
@@ -21,7 +21,13 @@ class OnCommand(commands.Cog):
             data = json.load(f)
 
         if user_id in data and data[user_id].get("on", False):
-            await interaction.response.send_message("⛔ Ești deja ON!", ephemeral=True)
+            embed = discord.Embed(
+                title="☂️ Pontaj deja activ",
+                description="Ești deja ON. Nu uita să folosești /off la final!",
+                color=discord.Color.gold()
+            )
+            embed.set_footer(text="Benny's Service • Umbrelă activă ☂️")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
         data[user_id] = {
@@ -33,7 +39,13 @@ class OnCommand(commands.Cog):
         with open(file_path, "w") as f:
             json.dump(data, f, indent=4)
 
-        await interaction.response.send_message("✅ Ești acum ON! Spor la muncă!", ephemeral=True)
+        embed = discord.Embed(
+            title="☂️ Pontaj pornit cu succes",
+            description="🛠️ Pontajul este activ. Spor la muncă!",
+            color=discord.Color.blue()
+        )
+        embed.set_footer(text="Benny's Service • Umbrelă activă ☂️")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(OnCommand(bot))
