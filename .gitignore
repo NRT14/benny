@@ -1,0 +1,12 @@
+# Fişiere Python
+__pycache__/
+*.py[cod]
+
+# Fişiere de configurare & virtual env
+.env
+.venv/
+*.env
+
+# Cache & sistem
+.DS_Store
+*.log
